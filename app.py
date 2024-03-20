@@ -19,10 +19,12 @@ def is_pdf(file_path):
     with open(file_path, 'rb') as f:
         return f.read(4) == b'%PDF'
 
-isPdfType = is_pdf('test.pdf')
+SAMPLE_DATA_PATH='./sampleData/test.pdf'
+
+isPdfType = is_pdf(SAMPLE_DATA_PATH)
 print("🐍 File: info_analysis/app.py | Line: 23 | undefined ~ pdfType",isPdfType)
 
-with pdfplumber.open('test.pdf') as pdf:
+with pdfplumber.open(SAMPLE_DATA_PATH) as pdf:
     text_content = ""
     for page in pdf.pages:
         text_content += page.extract_text()
