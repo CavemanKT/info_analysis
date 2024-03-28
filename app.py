@@ -26,28 +26,26 @@ print("🐍 File: info_analysis/app.py | Line: 23 | undefined ~ pdfType",isPdfTy
 
 with pdfplumber.open(SAMPLE_DATA_PATH) as pdf:
     text_content = ""
-    
+    table_content = []
+    no_of_pages = len(pdf.pages)
     for page in pdf.pages:
-        text_content += page.extract_text()
-        print(page.extract_table())
+        page_number = page.page_number
+        print(page_number)
+
+        text = page.extract_text()
+        text_content += text
+        table_content.append(page.extract_table())
+        for line in text.split('\n'):
+            print(line)
 
 words = text_content.split()  # Split text into individual words
+# print(words)
+
+
 word_frequency = Counter(words)
 
-# # import en_core_web_sm
-# nlp = spacy.load('en_core_web_sm')
+# print(table_content)
 
-# # nlp = en_core_web_sm.load()
-# max_similarity = 0
-# for word in words:
-#     doc = nlp(word)
-#     searchWord = nlp("sed")
-#     similarity = searchWord.similarity(doc)
-#     if similarity > max_similarity:
-#         max_similarity = similarity
-#         print("🐍 File: python/app.py | Line: 31 | undefined ~ similarity",similarity, word)
+# print(no_of_pages)
 
-# word1 = nlp('lorem')
-# word2 = nlp('word')
-# similarity = word1.similarity(word2)
-# print("🐍 File: python/app.py | Line: 31 | undefined ~ similarity",similarity)
+print(word_frequency)
