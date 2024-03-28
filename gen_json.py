@@ -41,21 +41,20 @@ def is_pdf(file_path):
 language_setting = 'english'
 
 def set_language(detectors):
-    print(detectors[2])
-    bytes_of_language1 = [detectors[0].name, detectors[0].read_bytes]
-    print("🐍 File: info_analysis/app.py | Line: 62 | undefined ~ bytes_of_language1",bytes_of_language1)
-    bytes_of_language2 = [detectors[1].name, detectors[1].read_bytes]
-    print("🐍 File: info_analysis/app.py | Line: 64 | undefined ~ bytes_of_language2",bytes_of_language2)
-    if(bytes_of_language1[1] > bytes_of_language2[1]):
-        if(bytes_of_language1[0] != "Chinese" and bytes_of_language1[0] != "English"):
+    language1_and_bytes = [detectors[0].name, detectors[0].read_bytes]
+    print("🐍 File: info_analysis/app.py | Line: 62 | undefined ~ language1_and_bytes", language1_and_bytes)
+    language2_and_bytes = [detectors[1].name, detectors[1].read_bytes]
+    print("🐍 File: info_analysis/app.py | Line: 64 | undefined ~ language2_and_bytes", language2_and_bytes)
+    if(language1_and_bytes[1] > language2_and_bytes[1]):
+        if(language1_and_bytes[0] != "Chinese" and language1_and_bytes[0] != "English"):
             language_setting = 'english'
         else:
-            language_setting = bytes_of_language1[0].lower()
+            language_setting = language1_and_bytes[0].lower()
     else:
-        if(bytes_of_language2[0] != 'Chinese' and bytes_of_language2[0] != 'English'):
+        if(language2_and_bytes[0] != 'Chinese' and language2_and_bytes[0] != 'English'):
             language_setting = 'english'
         else:
-            language_setting = bytes_of_language2[0].lower()
+            language_setting = language2_and_bytes[0].lower()
     return language_setting
 
 # get all files in sampleData directory
