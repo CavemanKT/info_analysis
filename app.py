@@ -26,97 +26,6 @@ import os
 
 # app = Flask(__name__)
 
-# create a folder called input
-if not os.path.exists('./input'):
-    os.makedirs('input')
-
-# check a file if it is a pdf
-def is_pdf(file_path):
-    """
-    Check if a file is a pdf
-    """
-    with open(file_path, 'rb') as f:
-        return f.read(4) == b'%PDF'
-
-SAMPLE_DATA_PATH='./sampleData/Handbook_Gas_Utilisation_Facilities.pdf'
-
-isPdfType = is_pdf(SAMPLE_DATA_PATH)
-print("🐍 File: info_analysis/app.py | Line: 23 | undefined ~ pdfType",isPdfType)
-
-filename = Path(SAMPLE_DATA_PATH).name
-print("filename: ", filename)
-
-
-# check if most of the text is in Chinese or English
-language_setting = 'english'
-extracted_text = extract_text(SAMPLE_DATA_PATH)
-detectors = Detector(extracted_text).languages
-print(detectors[2])
-bytes_of_language1 = [detectors[0].name, detectors[0].read_bytes]
-print("🐍 File: info_analysis/app.py | Line: 62 | undefined ~ bytes_of_language1",bytes_of_language1)
-bytes_of_language2 = [detectors[1].name, detectors[1].read_bytes]
-print("🐍 File: info_analysis/app.py | Line: 64 | undefined ~ bytes_of_language2",bytes_of_language2)
-if(bytes_of_language1[1] > bytes_of_language2[1]):
-    if(bytes_of_language1[0] != "Chinese" and bytes_of_language1[0] != "English"):
-        language_setting = 'english'
-    else:
-        language_setting = bytes_of_language1[0].lower()
-else:
-    if(bytes_of_language2[0] != 'Chinese' and bytes_of_language2[0] != 'English'):
-        language_setting = 'english'
-    else:
-        language_setting = bytes_of_language2[0].lower()
-
-
-# start processing pdf, generate json to prepare indexing
-if not False or os.path.exists(f"./input/{filename[:-4]}.json"):
-    # make the json file
-    with open(f"./input/{filename[:-4]}.json", 'w') as f:
-        f.write('[]')
-    with pdfplumber.open(SAMPLE_DATA_PATH) as pdf:
-        text_content = ""
-        table_content = []
-        total_pages = len(pdf.pages)
-        for page in pdf.pages:
-            page_number = page.page_number
-
-            text = page.extract_text()
-            
-
-            # # Create a parser and tokenize the text
-            parser = PlaintextParser.from_string(text, Tokenizer(language_setting))
-
-            # Access the parsed document
-            document = parser.document
-
-            # Summarize using sumy LSA
-            summary =summarizer_lsa(document,2)
-            lsa_summary=""            
-            for sentence in summary:     
-                lsa_summary+=str(sentence)                 
-                # print(lsa_summary)
-            obj = {
-                "summary": lsa_summary,
-                "page_number": page_number,
-                "content": text
-            }
-
-            with open(f"./input/{filename[:-4]}.json", 'r') as f:
-                data = json.load(f)
-            data.append(obj)
-            with open(f"./input/{filename[:-4]}.json", 'w', encoding='utf8') as f:
-                json.dump(data, f, ensure_ascii=False)
-            text_content += text
-            table_content.append(page.extract_table())
-            # for line in text.split('\n'):
-                # print(line)
-    words = text_content.split()  # Split text into individual words
-    word_frequency = Counter(words)
-else: 
-    with open(f"./input/{filename[:-4]}.json", 'r') as f:
-        text_content = f.read()
-        print("🐍 File: info_analysis/app.py | Line: 90 | undefined ~ text_content",text_content)
-
 
 
 
@@ -185,19 +94,22 @@ def insert_documents(documents):
 
 def reindex():
     create_index()
-    
+    # with open("./input/Handbook_Gas_Utilisation_Facilities.json", 'rb') as f:    
+    #     documents = json.loads(f.read())
+    # return insert_documents(documents)
+
     files = os.listdir('./input')
     for file in files:
-        if file.endswith("Handbook_Gas_Utilisation_Facilities.json"):
-            print(file)
+        if file.endswith(".json"):
             with open(f'./input/{file}', 'rt') as f:
                 documents = json.loads(f.read())
-                print(documents)
             insert_documents(documents)
     return True
 
 clear_index()
 reindex()
+
+SAMPLE_DATA_PATH='./sampleData/Handbook_Gas_Utilisation_Facilities.pdf'
 
 with open(SAMPLE_DATA_PATH, 'rb') as f:
   doc = {
