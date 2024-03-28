@@ -67,7 +67,7 @@ if not False or os.path.exists(f"./input/{filename[:-4]}.json"):
             # Summarize using sumy LSA
             summary =summarizer_lsa(document,2)
             lsa_summary=""            
-            for sentence in summary:                   
+            for sentence in summary:     
                 lsa_summary+=str(sentence)                 
                 print(lsa_summary)
             obj = {
@@ -79,8 +79,9 @@ if not False or os.path.exists(f"./input/{filename[:-4]}.json"):
             with open(f"./input/{filename[:-4]}.json", 'r') as f:
                 data = json.load(f)
             data.append(obj)
-            with open(f"./input/{filename[:-4]}.json", 'w') as f:
-                json.dump(data, f)
+            print(data)
+            with open(f"./input/{filename[:-4]}.json", 'w', encoding='utf8') as f:
+                json.dump(data, f, ensure_ascii=False)
             text_content += text
             table_content.append(page.extract_table())
             # for line in text.split('\n'):
